@@ -20,17 +20,21 @@ define(['react', 'components/core'], function (React, Core) {
       delete this.props.params['url'];
       var taggedURL = baseURL + '?' + this.serialize(this.props.params)
 
-      return <div className="text-center small-12 columns">
+      return <div className="text-center small-12 medium-11 medium-centered columns">
           <h2>Copy and paste your campaign link!</h2>
           <div className="row collapse">
             <div className="small-12 medium-6 large-8 columns">
               <input type="text" defaultValue={taggedURL} value={taggedURL} readOnly />
             </div>
             <div className="small-12 medium-6 large-4 columns">
-              <button className="button postfix">Copy Link to Clipboard</button>
+              <button className="button postfix" onClick={this.copy}>Copy Link to Clipboard</button>
             </div>
           </div>
         </div>
+    },
+
+    copy: function(){
+      alert('Your URL has been copied to the clipboard. Not really, but it should be. I was going to use ZeroClipboard but ran out of time.');
     },
 
     serialize: function(obj) {
@@ -81,8 +85,11 @@ define(['react', 'components/core'], function (React, Core) {
             {this.renderTextInput('campaignTerm', fields.campaignTerm)}
           </div>
         </div>
-        <div className="row">
-          <div className="small-12 columns small-text-center medium-text-right">
+        <div className="row submit">
+          <div className="small-12 medium-6 columns small-text-center medium-text-left">
+            <sup>*</sup>Required field.
+          </div>
+          <div className="small-12 medium-6 columns small-text-center medium-text-right">
             <button className="button radius" type="submit" onClick={this.handleSubmit}>Build My Link!</button>
           </div>
         </div>
@@ -111,19 +118,21 @@ define(['react', 'components/core'], function (React, Core) {
 
       var fields = ['campaignMedium', 'campaignSource', 'campaignName'];
       var errors = {};
+      var flag = 1;
 
       var isValidURL = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
       if (!isValidURL.test(this.trim(this.refs['url'].getDOMNode().value))) {
         errors['url'] = 'This field is required and must be a valid URl';
+        this.refs['url'].getDOMNode().focus();
+        flag++;
       }
 
-      var i = 1;
       fields.forEach(function(field) {
         var value = this.trim(this.refs[field].getDOMNode().value);
         if (!value) {
-          if (i === 1){
+          if (flag === 1){
              this.refs[field].getDOMNode().focus();
-            i ++;
+            flag ++;
           }
           errors[field] = 'This field is required';
         }
@@ -174,6 +183,8 @@ define(['react', 'components/core'], function (React, Core) {
 
     componentDidMount: function(){
       this.refs.url.getDOMNode().focus();
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
     }
 
   });

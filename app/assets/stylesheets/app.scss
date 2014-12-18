@@ -10,6 +10,17 @@ body {
 
 body {
   padding-bottom:3em !important;
+  color:#545e64;
+}
+
+h1,
+h2,
+h3 {
+  font-weight:400 !important;
+}
+
+p {
+  color:#545e64 !important;
 }
 
 .button {
@@ -23,14 +34,79 @@ body {
 
 header {
   background-color: $primary-color;
+  background-image: url(https://www.kissmetrics.com/assets/background-pattern-2-071baed47caf2a13cc5fb615e7284d13.svg);
+  background-size:contain;
+  background-position:center center;
+
+  img {
+    max-width:210px;
+    margin-top:2em;
+  }
 
   h1 {
     color:#FFFFFF;
     font-weight:400 !important;
     text-align:center;
-    padding:1.5em 0;
+    line-height:1.2em;
+    padding:1.3em 0 1.8em 0 !important;
     font-size:320%;
   }
+}
+
+.intro {
+  padding-top:3em !important;
+  padding-bottom:2em;
+
+  p {
+    font-size:120%;
+  }
+}
+
+.subheader {
+
+  h2 {
+    padding-top:1em;
+    padding-bottom:0.7em;
+  }
+
+}
+
+.url-builder-content {
+
+  margin-bottom:3em;
+
+  .row {
+
+    border-left:1px solid #cfd9dc;
+    border-right:1px solid #cfd9dc;
+
+    &:first-child {
+      border-top:1px solid #cfd9dc;
+      padding-top:2em;
+      -webkit-border-top-left-radius: 4px;
+      -webkit-border-top-right-radius: 4px;
+      -moz-border-radius-topleft: 4px;
+      -moz-border-radius-topright: 4px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+
+      @media only screen and (min-width: 40.063em) {
+
+        p {
+          min-height: 60px;
+        }
+      }
+
+    }
+
+  }
+
+  hr {
+
+    border-top-width:2px;
+
+  }
+
 }
 
 .form-group {
@@ -39,18 +115,43 @@ header {
 
   label {
     font-weight:400;
-    font-size:140%;
+    font-size:130%;
     line-height:1.2em;
   }
 
   p {
 
+    margin-top:0.6em;
+
     @media only screen and (min-width: 40.063em) {
-      min-height:120px;
+      min-height: 140px;
+    }
+
+    @media only screen and (min-width: 64.063em) {
+      min-height: 120px;
     }
 
   }
 
+}
+
+.submit {
+  padding-top:1em;
+  padding-bottom:1em !important;
+  background-color: #e6edf1;
+  color:#96a1a9;line-height:40px;
+  border:1px solid #cfd9dc;
+  border-top:none;
+  -webkit-border-bottom-left-radius: 4px;
+  -webkit-border-bottom-right-radius: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  -moz-border-radius-bottomright: 4px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+
+  .button {
+    margin-bottom:0;
+  }
 }
 
 .has-error {
@@ -80,6 +181,7 @@ header {
     h2 {
       font-weight:400;
       color:$primary-color;
+      padding:1em 0 0.7em 0;
     }
 
     input[readonly] {
