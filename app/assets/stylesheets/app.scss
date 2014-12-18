@@ -82,6 +82,10 @@ header {
       color:$primary-color;
     }
 
+    input[readonly] {
+      background-color: #FFFFFF;
+    }
+
   }
 
 }

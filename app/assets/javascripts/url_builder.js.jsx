@@ -11,22 +11,25 @@ define(['react', 'components/core'], function (React, Core) {
 
   var Link = React.createClass({
 
-    render: function() {
+    shouldComponentUpdate: function(newProps, newState) {
+      return true;
+    },
 
+    render: function() {
       var baseURL = this.props.params['url'];
       delete this.props.params['url'];
+      var taggedURL = baseURL + '?' + this.serialize(this.props.params)
 
       return <div className="text-center small-12 columns">
           <h2>Copy and paste your campaign link!</h2>
           <div className="row collapse">
             <div className="small-12 medium-6 large-8 columns">
-              <input type="text" defaultValue={baseURL + '?' + this.serialize(this.props.params)} />
+              <input type="text" defaultValue={taggedURL} value={taggedURL} readOnly />
             </div>
             <div className="small-12 medium-6 large-4 columns">
               <button className="button postfix">Copy Link to Clipboard</button>
             </div>
           </div>
-
         </div>
     },
 
@@ -126,7 +129,6 @@ define(['react', 'components/core'], function (React, Core) {
         }
       }.bind(this));
       this.setState({errors: errors});
-      console.log('Tested');
       var isValid = true;
       for (var error in errors) {
         isValid = false;
@@ -137,15 +139,16 @@ define(['react', 'components/core'], function (React, Core) {
     },
 
     getFormData: function() {
-      var data = {
+      var data = {};
+      data = {
         url: this.refs.url.getDOMNode().value,
         campaignMedium: this.refs.campaignMedium.getDOMNode().value,
         campaignSource: this.refs.campaignSource.getDOMNode().value,
         campaignName: this.refs.campaignName.getDOMNode().value,
         campaignContent: this.refs.campaignContent.getDOMNode().value,
         campaignTerm: this.refs.campaignTerm.getDOMNode().value
-      }
-      return data
+      };
+      return data;
     },
 
     trim:  function(string) {
