@@ -12,6 +12,15 @@ body {
   padding-bottom:3em !important;
 }
 
+.button {
+  background-color: #268cd9 !important;
+  text-transform: uppercase;
+
+  &:hover {
+    background-color: #1d79be !important;
+  }
+}
+
 header {
   background-color: $primary-color;
 
@@ -79,4 +88,27 @@ header {
 
 footer {
   background-color: #242e36;
+
+  h3 {
+
+    color:#FFFFFF;
+    font-weight:400;
+    padding-top:2em;
+    padding-bottom:0em;
+
+    &:nth-child(2) {
+      color:#ee7311 !important;
+      padding-top:0em !important;
+      padding-bottom:0.8em !important;
+    }
+
+    span {
+      font-style: italic;
+    }
+
+  }
+
+  .button {
+    margin-bottom:3em;
+  }
 }

@@ -41,7 +41,7 @@ define(['react', 'components/core'], function (React, Core) {
 
   });
 
-  return Form = React.createClass({
+  return React.createClass({
 
     getInitialState: function() {
       return {errors: {}}
@@ -49,7 +49,7 @@ define(['react', 'components/core'], function (React, Core) {
 
     render: function () {
       return <div className="url-builder-content">
-        <div className="row" data-equalizer>
+        <div className="row">
           <div className="small-12 medium-6 columns">
             {this.renderTextInput('url', fields.url)}
           </div>
@@ -66,7 +66,9 @@ define(['react', 'components/core'], function (React, Core) {
           </div>
         </div>
         <div className="row">
-          <hr/>
+          <div className="small-12 columns">
+            <hr />
+          </div>
         </div>
         <div className="row">
           <div className="small-12 medium-6 columns">
@@ -78,7 +80,7 @@ define(['react', 'components/core'], function (React, Core) {
         </div>
         <div className="row">
           <div className="small-12 columns small-text-center medium-text-right">
-            <button type="submit" onClick={this.handleSubmit}>Build My Link!</button>
+            <button className="button radius" type="submit" onClick={this.handleSubmit}>Build My Link!</button>
           </div>
         </div>
       </div>;
@@ -91,7 +93,7 @@ define(['react', 'components/core'], function (React, Core) {
     renderField: function(id, field) {
       return <div className={this.hasError('form-group', {'has-error': id in this.state.errors})}>
         <label htmlFor={id} className="control-label">{field.label}</label>
-        <p data-equalizer-watch>{field.desc}</p>
+        <p>{field.desc}</p>
         <input type="text" className="form-control" placeholder={field.placeholder} id={id} ref={id}/>
       </div>
     },
@@ -112,9 +114,14 @@ define(['react', 'components/core'], function (React, Core) {
         errors['url'] = 'This field is required and must be a valid URl';
       }
 
+      var i = 1;
       fields.forEach(function(field) {
         var value = this.trim(this.refs[field].getDOMNode().value);
         if (!value) {
+          if (i === 1){
+             this.refs[field].getDOMNode().focus();
+            i ++;
+          }
           errors[field] = 'This field is required';
         }
       }.bind(this));
