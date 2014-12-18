@@ -12,17 +12,40 @@ define(['react', 'components/core'], function (React, Core) {
   var Link = React.createClass({
 
     render: function() {
-      return <div>
-          Your link
+
+      var baseURL = this.props.params['url'];
+      delete this.props.params['url'];
+
+      return <div className="text-center small-12 columns">
+          <h2>Copy and paste your campaign link!</h2>
+          <div className="row">
+            <div className="small-12 medium-6 large-8 columns">
+              <input type="text" defaultValue={baseURL + '?' + this.serialize(this.props.params)} />
+            </div>
+            <div className="small-12 medium-6 large-4 columns">
+              <button>Copy Link to Clipboard</button>
+            </div>
+          </div>
+
         </div>
-      // var submitted
-      // if (this.state.submitted !== null) {
-      // }
+    },
+
+    serialize: function(obj) {
+      var str = [];
+      for(var p in obj)
+        if (obj.hasOwnProperty(p) && obj[p] !== '') {
+          str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        }
+      return str.join("&");
     }
 
   });
 
-  return React.createClass({
+  return Form = React.createClass({
+
+    getInitialState: function() {
+      return {errors: {}}
+    },
 
     render: function () {
       return <div className="url-builder-content">
@@ -65,7 +88,7 @@ define(['react', 'components/core'], function (React, Core) {
     },
 
     renderField: function(id, label, field) {
-      return <div className="">
+      return <div className={this.hasError('form-group', {'has-error': id in this.state.errors})}>
         <label htmlFor={id} className="col-sm-4 control-label">{label}</label>
         <div className="col-sm-6">
           {field}
@@ -75,30 +98,30 @@ define(['react', 'components/core'], function (React, Core) {
 
     handleSubmit: function() {
       if (this.isValid()) {
-        this.setState({submitted: this.getFormData()});
-        React.render(<Link />, document.getElementById('link'))
+        React.render(<Link params={this.getFormData()} />, document.getElementById('link'))
       }
     },
 
     isValid: function() {
+
       var fields = ['url', 'campaignMedium', 'campaignSource', 'campaignName']
 
       var errors = {}
       fields.forEach(function(field) {
-        var value = this.trim(this.refs[field].getDOMNode().value)
+        var value = this.trim(this.refs[field].getDOMNode().value);
         if (!value) {
           errors[field] = 'This field is required'
         }
       }.bind(this))
-      this.setState({errors: errors})
+      this.setState({errors: errors});
 
-      var isValid = true
+      var isValid = true;
       for (var error in errors) {
-        isValid = false
-        break
+        isValid = false;
+        break;
       }
 
-      return isValid
+      return isValid;
     },
 
     getFormData: function() {
@@ -106,16 +129,33 @@ define(['react', 'components/core'], function (React, Core) {
         url: this.refs.url.getDOMNode().value,
         campaignMedium: this.refs.campaignMedium.getDOMNode().value,
         campaignSource: this.refs.campaignSource.getDOMNode().value,
-        campaignName: this.refs.campaignName.getDOMNode().value
+        campaignName: this.refs.campaignName.getDOMNode().value,
+        campaignContent: this.refs.campaignContent.getDOMNode().value,
+        campaignTerm: this.refs.campaignTerm.getDOMNode().value
       }
       return data
     },
 
-    trim: function() {
+    trim:  function(string) {
       var TRIM_RE = /^\s+|\s+$/g
-      return function trim(string) {
-        return string.replace(TRIM_RE, '')
+      return string.replace(TRIM_RE, '');
+    },
+
+    hasError: function(baseClass, errorClass) {
+      var classNames = [];
+      if (typeof errorClass == 'undefined') {
+        errorClass = baseClass;
       }
+      else {
+        classNames.push(baseClass);
+      }
+      for (var className in errorClass) {
+        if (!!errorClass[className]) {
+          classNames.push(className);
+        }
+      }
+      return classNames.join(' ');
     }
+
   });
 });

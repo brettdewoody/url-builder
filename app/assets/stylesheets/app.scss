@@ -1,5 +1,17 @@
+$primary-color: #2f78a9;
+$secondary-color: #f0f9ff;
+
+html,
+body {
+
+}
+
+body {
+  padding-bottom:3em !important;
+}
+
 header {
-  background-color: #2f78a9;
+  background-color: $primary-color;
 
   h1 {
     color:#FFFFFF;
@@ -8,4 +20,35 @@ header {
     padding:1.5em 0;
     font-size:320%;
   }
+}
+
+.has-error {
+
+  label {
+    color: #c70000 !important;
+  }
+
+  input {
+
+    border-color: #c70000 !important;
+
+  }
+
+}
+
+.link {
+
+  > div {
+
+    background-color: $secondary-color;
+    color: $primary-color;
+    padding:3em auto !important;
+
+    h2 {
+      font-weight:400;
+      color:$primary-color;
+    }
+
+  }
+
 }
