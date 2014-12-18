@@ -1,12 +1,12 @@
 define(['react', 'components/core'], function (React, Core) {
 
   var fields = {
-      url: {type: 'text', label: 'What URL do you want to send people to?*' },
-      campaignMedium: {type: 'text', label: 'Campaign Medium*'},
-      campaignSource: {type: 'text', label: 'Campaign Source*'},
-      campaignName: {type: 'text', label: 'Campaign Name*'},
-      campaignContent: {type: 'text', label: 'Campaign Content (optional)'},
-      campaignTerm: {type: 'text', label: 'Campaign Term (optional)'}
+      url: {type: 'url', label: 'What URL do you want to send people to?*', placeholder: 'Enter URL', desc: 'This will be the base of your URL.' },
+      campaignMedium: {type: 'text', label: 'Campaign Medium*', placeholder: 'Campaign Medium', desc: 'This is the channel the link is being used in. Use broad categories like email, social, or PPC.'},
+      campaignSource: {type: 'text', label: 'Campaign Source*', placeholder: 'Campaign Source', desc: 'What\'s the specific place that you’ll be using this link? For example, “email” is too broad for this one, use the name of your email list like “Newsletter” or “Customer List”.'},
+      campaignName: {type: 'text', label: 'Campaign Name*', placeholder: 'Campaign Name', desc: 'Use any name you want. It should be the name of your entire marketing campaign. This way, you can look at all the links from this campaign even if you use them in different places and channels.'},
+      campaignContent: {type: 'text', label: 'Campaign Content (optional)', placeholder: 'Campaign Content', desc: 'If you use a bunch of links all in the same spot and all the fields above are identical, you can use this field to add more detail. For example, one link might be “header” while your second link is “footer.”'},
+      campaignTerm: {type: 'text', label: 'Campaign Term (optional)', placeholder: 'Campaign Term', desc: 'If you’re using this link for search ads and also want to track the search term you’re running your ad on, add a campaign term.'}
     };
 
   var Link = React.createClass({
@@ -18,12 +18,12 @@ define(['react', 'components/core'], function (React, Core) {
 
       return <div className="text-center small-12 columns">
           <h2>Copy and paste your campaign link!</h2>
-          <div className="row">
+          <div className="row collapse">
             <div className="small-12 medium-6 large-8 columns">
               <input type="text" defaultValue={baseURL + '?' + this.serialize(this.props.params)} />
             </div>
             <div className="small-12 medium-6 large-4 columns">
-              <button>Copy Link to Clipboard</button>
+              <button className="button postfix">Copy Link to Clipboard</button>
             </div>
           </div>
 
@@ -49,50 +49,50 @@ define(['react', 'components/core'], function (React, Core) {
 
     render: function () {
       return <div className="url-builder-content">
-        <div className="row">
-          <div className="small-12 large-6 columns">
-            {this.renderTextInput('url', fields.url.label)}
+        <div className="row" data-equalizer>
+          <div className="small-12 medium-6 columns">
+            {this.renderTextInput('url', fields.url)}
           </div>
-          <div className="small-12 large-6 columns">
-            {this.renderTextInput('campaignMedium', fields.campaignMedium.label)}
-          </div>
-        </div>
-        <div className="row">
-          <div className="small-12 large-6 columns">
-            {this.renderTextInput('campaignSource', fields.campaignSource.label)}
-          </div>
-          <div className="small-12 large-6 columns">
-            {this.renderTextInput('campaignName', fields.campaignName.label)}
+          <div className="small-12 medium-6 columns">
+            {this.renderTextInput('campaignMedium', fields.campaignMedium)}
           </div>
         </div>
         <div className="row">
-          <div className="small-12 large-6 columns">
-            {this.renderTextInput('campaignContent', fields.campaignContent.label)}
+          <div className="small-12 medium-6 columns">
+            {this.renderTextInput('campaignSource', fields.campaignSource)}
           </div>
-          <div className="small-12 large-6 columns">
-            {this.renderTextInput('campaignTerm', fields.campaignTerm.label)}
+          <div className="small-12 medium-6 columns">
+            {this.renderTextInput('campaignName', fields.campaignName)}
           </div>
         </div>
         <div className="row">
-          <div className="small-12 columns text-right">
+          <hr/>
+        </div>
+        <div className="row">
+          <div className="small-12 medium-6 columns">
+            {this.renderTextInput('campaignContent', fields.campaignContent)}
+          </div>
+          <div className="small-12 medium-6 columns">
+            {this.renderTextInput('campaignTerm', fields.campaignTerm)}
+          </div>
+        </div>
+        <div className="row">
+          <div className="small-12 columns small-text-center medium-text-right">
             <button type="submit" onClick={this.handleSubmit}>Build My Link!</button>
           </div>
         </div>
       </div>;
     },
 
-    renderTextInput: function(id, label) {
-      return this.renderField(id, label,
-        <Core.TextInput type="text" className="form-control" id={id} ref={id}/>
-      )
+    renderTextInput: function(id, field) {
+      return this.renderField(id, field)
     },
 
-    renderField: function(id, label, field) {
+    renderField: function(id, field) {
       return <div className={this.hasError('form-group', {'has-error': id in this.state.errors})}>
-        <label htmlFor={id} className="col-sm-4 control-label">{label}</label>
-        <div className="col-sm-6">
-          {field}
-        </div>
+        <label htmlFor={id} className="control-label">{field.label}</label>
+        <p data-equalizer-watch>{field.desc}</p>
+        <input type="text" className="form-control" placeholder={field.placeholder} id={id} ref={id}/>
       </div>
     },
 
@@ -104,17 +104,22 @@ define(['react', 'components/core'], function (React, Core) {
 
     isValid: function() {
 
-      var fields = ['url', 'campaignMedium', 'campaignSource', 'campaignName']
+      var fields = ['campaignMedium', 'campaignSource', 'campaignName'];
+      var errors = {};
 
-      var errors = {}
+      var isValidURL = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+      if (!isValidURL.test(this.trim(this.refs['url'].getDOMNode().value))) {
+        errors['url'] = 'This field is required and must be a valid URl';
+      }
+
       fields.forEach(function(field) {
         var value = this.trim(this.refs[field].getDOMNode().value);
         if (!value) {
-          errors[field] = 'This field is required'
+          errors[field] = 'This field is required';
         }
-      }.bind(this))
+      }.bind(this));
       this.setState({errors: errors});
-
+      console.log('Tested');
       var isValid = true;
       for (var error in errors) {
         isValid = false;
@@ -155,6 +160,10 @@ define(['react', 'components/core'], function (React, Core) {
         }
       }
       return classNames.join(' ');
+    },
+
+    componentDidMount: function(){
+      this.refs.url.getDOMNode().focus();
     }
 
   });

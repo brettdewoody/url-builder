@@ -4,6 +4,8 @@ $secondary-color: #f0f9ff;
 html,
 body {
 
+  font-size:16px;
+
 }
 
 body {
@@ -22,6 +24,26 @@ header {
   }
 }
 
+.form-group {
+
+  margin-bottom:2em;
+
+  label {
+    font-weight:400;
+    font-size:140%;
+    line-height:1.2em;
+  }
+
+  p {
+
+    @media only screen and (min-width: 40.063em) {
+      min-height:120px;
+    }
+
+  }
+
+}
+
 .has-error {
 
   label {
@@ -38,6 +60,8 @@ header {
 
 .link {
 
+  margin-bottom:3em;
+
   > div {
 
     background-color: $secondary-color;
@@ -51,4 +75,8 @@ header {
 
   }
 
+}
+
+footer {
+  background-color: #242e36;
 }
