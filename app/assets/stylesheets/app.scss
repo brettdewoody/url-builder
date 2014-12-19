@@ -49,15 +49,7 @@ header {
     text-align:center;
     line-height:1.2em;
     padding:1.3em 0 1.8em 0 !important;
-    font-size:130%;
-
-    @media only screen and (min-width: 40.063em) {
-      font-size:210%;
-    }
-
-    @media only screen and (min-width: 64.063em) {
-      font-size:330%;
-    }
+    font-size:320%;
   }
 }
 
