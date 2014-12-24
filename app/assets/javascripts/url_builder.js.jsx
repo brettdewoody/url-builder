@@ -1,13 +1,13 @@
-define(['react', 'components/core'], function (React, Core) {
+define(['react', 'components/core', 'typeahead', 'jquery'], function (React, Core, Typeahead, $) {
 
   var fields = {
-      url: {type: 'url', label: 'What URL do you want to send people to?*', placeholder: 'Enter URL', desc: 'This will be the base of your URL.' },
-      campaignMedium: {type: 'text', label: 'Campaign Medium*', placeholder: 'Campaign Medium', desc: 'This is the channel the link is being used in. Use broad categories like email, social, or PPC.'},
-      campaignSource: {type: 'text', label: 'Campaign Source*', placeholder: 'Campaign Source', desc: 'What\'s the specific place that you’ll be using this link? For example, “email” is too broad for this one, use the name of your email list like “Newsletter” or “Customer List”.'},
-      campaignName: {type: 'text', label: 'Campaign Name*', placeholder: 'Campaign Name', desc: 'Use any name you want. It should be the name of your entire marketing campaign. This way, you can look at all the links from this campaign even if you use them in different places and channels.'},
-      campaignContent: {type: 'text', label: 'Campaign Content (optional)', placeholder: 'Campaign Content', desc: 'If you use a bunch of links all in the same spot and all the fields above are identical, you can use this field to add more detail. For example, one link might be “header” while your second link is “footer.”'},
-      campaignTerm: {type: 'text', label: 'Campaign Term (optional)', placeholder: 'Campaign Term', desc: 'If you’re using this link for search ads and also want to track the search term you’re running your ad on, add a campaign term.'}
-    };
+    url: {type: 'url', label: 'What URL do you want to send people to?*', placeholder: 'Enter URL', desc: 'This will be the base of your URL.' },
+    campaignMedium: {type: 'text', label: 'Campaign Medium*', placeholder: 'Campaign Medium', desc: 'This is the channel the link is being used in. Use broad categories like email, social, or PPC.'},
+    campaignSource: {type: 'text', label: 'Campaign Source*', placeholder: 'Campaign Source', desc: 'What\'s the specific place that you’ll be using this link? For example, “email” is too broad for this one, use the name of your email list like “Newsletter” or “Customer List”.'},
+    campaignName: {type: 'text', label: 'Campaign Name*', placeholder: 'Campaign Name', desc: 'Use any name you want. It should be the name of your entire marketing campaign. This way, you can look at all the links from this campaign even if you use them in different places and channels.'},
+    campaignContent: {type: 'text', label: 'Campaign Content (optional)', placeholder: 'Campaign Content', desc: 'If you use a bunch of links all in the same spot and all the fields above are identical, you can use this field to add more detail. For example, one link might be “header” while your second link is “footer.”'},
+    campaignTerm: {type: 'text', label: 'Campaign Term (optional)', placeholder: 'Campaign Term', desc: 'If you’re using this link for search ads and also want to track the search term you’re running your ad on, add a campaign term.'}
+  };
 
   var Link = React.createClass({
 
@@ -18,7 +18,7 @@ define(['react', 'components/core'], function (React, Core) {
     render: function() {
       var baseURL = this.props.params['url'];
       delete this.props.params['url'];
-      var taggedURL = baseURL + '?' + this.serialize(this.props.params)
+      var taggedURL = baseURL + '?' + this.serialize(this.props.params);
 
       return <div className="text-center small-12 medium-11 medium-centered columns">
           <h2>Copy and paste your campaign link!</h2>
@@ -30,7 +30,7 @@ define(['react', 'components/core'], function (React, Core) {
               <button className="button postfix" onClick={this.copy}>Copy Link to Clipboard</button>
             </div>
           </div>
-        </div>
+        </div>;
     },
 
     copy: function(){
@@ -51,11 +51,12 @@ define(['react', 'components/core'], function (React, Core) {
   return React.createClass({
 
     getInitialState: function() {
-      return {errors: {}}
+      return {errors: {}};
     },
 
     render: function () {
-      return <div className="url-builder-content">
+      return <form id="form-url-builder">
+      <div className="url-builder-content">
         <div className="row">
           <div className="small-12 medium-6 columns">
             {this.renderTextInput('url', fields.url)}
@@ -93,11 +94,18 @@ define(['react', 'components/core'], function (React, Core) {
             <button className="button radius" type="submit" onClick={this.handleSubmit}>Build My Link!</button>
           </div>
         </div>
-      </div>;
+      </div>
+      </form>;
+    },
+
+    componentWillMount: function() {
+
+      this.setState({'storage' : this.hasStorage()});
+
     },
 
     renderTextInput: function(id, field) {
-      return this.renderField(id, field)
+      return this.renderField(id, field);
     },
 
     renderField: function(id, field) {
@@ -105,12 +113,58 @@ define(['react', 'components/core'], function (React, Core) {
         <label htmlFor={id} className="control-label">{field.label}</label>
         <p>{field.desc}</p>
         <input type="text" className="form-control" placeholder={field.placeholder} id={id} ref={id}/>
-      </div>
+      </div>;
     },
 
-    handleSubmit: function() {
+    handleSubmit: function(e) {
+      e.preventDefault();
       if (this.isValid()) {
-        React.render(<Link params={this.getFormData()} />, document.getElementById('link'))
+        if (this.state.storage) {
+          var fields = ['url', 'campaignMedium', 'campaignSource', 'campaignName', 'campaignContent', 'campaignTerm'];
+
+          fields.forEach(function(field) {
+            var storedField = (localStorage.getItem(field) ? JSON.parse(localStorage.getItem(field)) : []);
+            var newVal = this.trim(this.refs[field].getDOMNode().value);
+
+            if (newVal !== '' && storedField.indexOf(newVal) === -1) {
+              storedField.push(this.refs[field].getDOMNode().value);
+              localStorage.setItem(field, JSON.stringify(storedField));
+              $('input#' + field).typeahead('destroy');
+              this.typeahead(field);
+            }
+
+          }.bind(this));
+        }
+
+        React.render(<Link params={this.getFormData()} />, document.getElementById('link'), function(){
+          document.getElementById('form-url-builder').reset();
+        });
+
+
+      }
+    },
+
+    typeahead: function(field){
+      var data = JSON.parse(localStorage.getItem(field));
+      $('input#' + field).typeahead({
+        minLength: 3,
+        highlight: true,
+      },
+      {
+        name: 'data',
+        displayKey: 'value',
+        source: this.substringMatcher(data)
+      });
+
+    },
+
+    hasStorage: function() {
+      try {
+        localStorage.setItem('mod', 'mod');
+        localStorage.removeItem('mod');
+        return true;
+      } catch (exception) {
+        return false;
       }
     },
 
@@ -137,6 +191,7 @@ define(['react', 'components/core'], function (React, Core) {
           errors[field] = 'This field is required';
         }
       }.bind(this));
+
       this.setState({errors: errors});
       var isValid = true;
       for (var error in errors) {
@@ -161,7 +216,7 @@ define(['react', 'components/core'], function (React, Core) {
     },
 
     trim:  function(string) {
-      var TRIM_RE = /^\s+|\s+$/g
+      var TRIM_RE = /^\s+|\s+$/g;
       return string.replace(TRIM_RE, '');
     },
 
@@ -185,6 +240,39 @@ define(['react', 'components/core'], function (React, Core) {
       this.refs.url.getDOMNode().focus();
       window.scrollTo(0, 0);
       document.body.scrollTop = 0;
+
+      var fields = ['url', 'campaignMedium', 'campaignSource', 'campaignName', 'campaignContent', 'campaignTerm'];
+
+      if (this.state.storage) {
+        fields.forEach(function(field) {
+          this.typeahead(field);
+        }.bind(this));
+      }
+
+    },
+
+    substringMatcher: function(strs) {
+      return function findMatches(q, cb) {
+        var matches, substrRegex;
+
+        // an array that will be populated with substring matches
+        matches = [];
+
+        // regex used to determine if a string contains the substring `q`
+        substrRegex = new RegExp(q, 'i');
+
+        // iterate through the pool of strings and for any string that
+        // contains the substring `q`, add it to the `matches` array
+        $.each(strs, function(i, str) {
+          if (substrRegex.test(str)) {
+            // the typeahead jQuery plugin expects suggestions to a
+            // JavaScript object, refer to typeahead docs for more info
+            matches.push({ value: str });
+          }
+        });
+
+        cb(matches);
+      }
     }
 
   });

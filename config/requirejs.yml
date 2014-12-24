@@ -3,3 +3,4 @@ modules:
 
 paths:
   react: 'react/react'
+  typeahead: 'typeahead/dist/typeahead.bundle.min'

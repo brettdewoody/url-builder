@@ -154,6 +154,10 @@ header {
   }
 }
 
+input {
+  margin-bottom:0 !important;
+}
+
 .has-error {
 
   label {
@@ -163,6 +167,7 @@ header {
   input {
 
     border-color: #c70000 !important;
+    margin-bottom:0 !important;
 
   }
 
@@ -190,6 +195,24 @@ header {
 
   }
 
+}
+
+.twitter-typeahead,
+.tt-dropdown-menu {
+  width:100%;
+}
+
+.tt-dropdown-menu {
+  background-color:#cfd9dc;
+}
+
+.tt-suggestions {
+  margin-bottom:1em;
+}
+
+.tt-suggestion {
+  height:1.3em;
+  padding:0 0 0.4em 0.4em;
 }
 
 footer {
