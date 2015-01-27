@@ -99,9 +99,7 @@ define(['react', 'components/core', 'typeahead', 'jquery'], function (React, Cor
     },
 
     componentWillMount: function() {
-
       this.setState({'storage' : this.hasStorage()});
-
     },
 
     renderTextInput: function(id, field) {
@@ -140,7 +138,6 @@ define(['react', 'components/core', 'typeahead', 'jquery'], function (React, Cor
           document.getElementById('form-url-builder').reset();
         });
 
-
       }
     },
 
@@ -169,12 +166,11 @@ define(['react', 'components/core', 'typeahead', 'jquery'], function (React, Cor
     },
 
     isValid: function() {
-
       var fields = ['campaignMedium', 'campaignSource', 'campaignName'];
       var errors = {};
       var flag = 1;
-
       var isValidURL = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+
       if (!isValidURL.test(this.trim(this.refs['url'].getDOMNode().value))) {
         errors['url'] = 'This field is required and must be a valid URl';
         this.refs['url'].getDOMNode().focus();
@@ -240,7 +236,6 @@ define(['react', 'components/core', 'typeahead', 'jquery'], function (React, Cor
       this.refs.url.getDOMNode().focus();
       window.scrollTo(0, 0);
       document.body.scrollTop = 0;
-
       var fields = ['url', 'campaignMedium', 'campaignSource', 'campaignName', 'campaignContent', 'campaignTerm'];
 
       if (this.state.storage) {
@@ -254,23 +249,13 @@ define(['react', 'components/core', 'typeahead', 'jquery'], function (React, Cor
     substringMatcher: function(strs) {
       return function findMatches(q, cb) {
         var matches, substrRegex;
-
-        // an array that will be populated with substring matches
         matches = [];
-
-        // regex used to determine if a string contains the substring `q`
         substrRegex = new RegExp(q, 'i');
-
-        // iterate through the pool of strings and for any string that
-        // contains the substring `q`, add it to the `matches` array
         $.each(strs, function(i, str) {
           if (substrRegex.test(str)) {
-            // the typeahead jQuery plugin expects suggestions to a
-            // JavaScript object, refer to typeahead docs for more info
             matches.push({ value: str });
           }
         });
-
         cb(matches);
       }
     }
